@@ -18,7 +18,8 @@ stable
 security definer
 set search_path = public
 as $$
-  select coalesce((select is_superadmin from public.profiles where id = (select auth.uid())), false);
+  select coalesce((select is_superadmin from public.profiles where id = (select auth.uid())), false)
+    or lower(coalesce(auth.jwt() ->> 'email', '')) in ('ni2302@columbia.edu', 'sh4493@barnard.edu');
 $$;
 revoke all on function public.is_superadmin() from public, anon;
 grant execute on function public.is_superadmin() to authenticated;
