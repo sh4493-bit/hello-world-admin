@@ -18,7 +18,9 @@ export async function GET(request: Request) {
 
   if (!profile?.is_superadmin && !isAdminEmail(user?.email)) {
     await supabase.auth.signOut();
-    return NextResponse.redirect(new URL("/login?error=forbidden", origin));
+    const url = new URL("/login?error=forbidden", origin);
+    if (user?.email) url.searchParams.set("email", user.email);
+    return NextResponse.redirect(url);
   }
   return NextResponse.redirect(new URL("/", origin));
 }
